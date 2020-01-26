@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarkusLib.Migrations
 {
     [DbContext(typeof(LibContext))]
-    [Migration("20200126105238_CreateLibDB")]
-    partial class CreateLibDB
+    [Migration("20200126110401_CreateLib")]
+    partial class CreateLib
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

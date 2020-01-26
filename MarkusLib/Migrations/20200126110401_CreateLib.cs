@@ -2,7 +2,7 @@
 
 namespace MarkusLib.Migrations
 {
-    public partial class CreateLibDB : Migration
+    public partial class CreateLib : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
