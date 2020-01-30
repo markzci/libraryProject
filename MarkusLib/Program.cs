@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using MarkusLib.Models;
 using System.Linq;
 using System.Threading;
+using System.IO;
 
 namespace MarkusLib
 {
@@ -177,17 +178,18 @@ namespace MarkusLib
 
                         Console.Write($"Title[{editBookById.title}]:");
                         editBookById.title = Console.ReadLine();
-                        if (!string.IsNullOrEmpty(editBookById.title)) libContext.SaveChanges(); //check if title is empty, if not, save, else skip
+                        if (editBookById.title.Length > 0) libContext.SaveChanges(); //check if title is empty, if not, save, else skip
 
                         Console.Write($"Author[{editBookById.author}]:");
                         editBookById.author = Console.ReadLine();
-                        if (!string.IsNullOrEmpty(editBookById.author)) libContext.SaveChanges(); //check if author is empty, if not, save, else skip
+                        if (editBookById.author.Length > 0) libContext.SaveChanges(); //check if author is empty, if not, save, else skip
 
 
                         Console.Write($"Summary[{editBookById.summary}]:");
                         editBookById.summary = Console.ReadLine();
-                        if (!string.IsNullOrEmpty(editBookById.summary)) libContext.SaveChanges(); //check if summary is empty, if not, save, else skip
+                        if (editBookById.summary.Length > 0) libContext.SaveChanges(); //check if summary is empty, if not, save, else skip
 
+                        Console.WriteLine("Book Saved.");
                         Console.WriteLine("To view details enter the book ID, to return to the Main Menu press <Enter>.");
                         Console.Write("Enter ID Number:");
                     }
@@ -199,7 +201,7 @@ namespace MarkusLib
 
         public static void Search()
         {
-            Console.WriteLine("==== Search the Library ==== \n");
+            Console.WriteLine("Search the Library ================= \n");
             Console.Write("Search:");
             string searchString = Console.ReadLine();
 
@@ -212,7 +214,7 @@ namespace MarkusLib
 
             if (matchCount > 0)
             {
-                Console.WriteLine("The following items matched your query. Enter the book ID to see more details, or <Enter> to return.");
+                Console.WriteLine("The following items matched your query. Enter the book ID to see more details, or <Enter> to return to the Main Menu.");
                 foreach (var book in matchedItems)
                 {
                     Console.WriteLine($"[{book.ID}]{book.title}");
@@ -228,12 +230,12 @@ namespace MarkusLib
                                               .Where(b => b.ID == id)
                                               .Single();
 
-                
+
                         Console.WriteLine("\nID:" + bookById.ID);
                         Console.WriteLine($"Title: {bookById.title}");
                         Console.WriteLine($"Author: {bookById.author}");
                         Console.WriteLine($"Summary: {bookById.summary}" + "\n");
-                        
+
                         Console.Write("Enter ID:");
 
                     }
@@ -242,11 +244,30 @@ namespace MarkusLib
                 }
             }
             else
+            {
                 Console.WriteLine($"Nothing was found for the search term {searchString}");
-
-
+                Console.Write("Press <Enter> to return to the Main Menu.");
+                Console.ReadKey();
+            }
         }
 
+        public static void WriteToFile()
+        {
+            string filePath = @"C:\Users\Mark\Downloads\library.csv";
+            var libContext = new LibContext();
+            var entireLibrary = libContext.Books
+                                       .ToList();
+
+            var count = entireLibrary.Count();
+            if (count > 0)
+            {
+                foreach (var book in entireLibrary)
+                {
+                    File.AppendAllText(filePath, String.Join(",", book.ID, book.author, book.title, book.summary + "\n"));
+                }
+                Console.WriteLine("Library Saved.");
+            }
+        }
 
 
         static void Main(string[] args)
@@ -277,7 +298,9 @@ namespace MarkusLib
                             Header();
                             Search();
                             break;
-
+                        case 5:
+                            WriteToFile();
+                            break; 
                     }
                 }
             }
