@@ -95,6 +95,8 @@ namespace MarkusLib
             Header();
             Console.WriteLine("==== Add a Book ==== \n");
             Console.WriteLine("To Add a Book, press <Enter> to proceed, or press <Escape> to return to the Main Menu.  \n");
+
+            //read user key from console
             ConsoleKeyInfo cki;
             cki = Console.ReadKey(true);
             if (cki.Key != ConsoleKey.Escape && cki.Key == ConsoleKey.Enter)
@@ -113,6 +115,7 @@ namespace MarkusLib
 
                     Console.Write("Summary:");
                     string summary = Console.ReadLine();
+
 
                     using var libContext = new LibContext();
                     var std = new Book()
@@ -167,17 +170,34 @@ namespace MarkusLib
                     {
                         var editBookById = libContext.Books
                                               .Where(b => b.ID == id)
-                                              .ToList();
+                                              .Single();
 
-                        foreach (var book in editBookById)
-                        {
-                            Console.WriteLine("\nID:" + book.ID +"\n");
-                            Console.WriteLine("Input the following information. To leave a field unchanged, hit <Enter> ");
+                        //foreach (var book in editBookById)
+                        //{
+                        Console.WriteLine("\nID:" + editBookById.ID +"\n");
+                        Console.WriteLine("Input the following information. To leave a field unchanged, hit <Enter> ");
 
-                            Console.WriteLine(book.title);
-                            Console.WriteLine(book.author);
-                            Console.WriteLine(book.summary + "\n");
-                        }
+                        Console.Write($"Title[{editBookById.title}]:");
+                        editBookById.title = Console.ReadLine();
+                        if (!string.IsNullOrEmpty(editBookById.title)) libContext.SaveChanges();
+
+                        Console.Write($"Author[{editBookById.author}]:");
+                        editBookById.author = Console.ReadLine();
+                        if (!string.IsNullOrEmpty(editBookById.author)) libContext.SaveChanges();
+
+
+                        Console.Write($"Summary[{editBookById.summary}]:");
+                        editBookById.summary = Console.ReadLine();
+                        if (!string.IsNullOrEmpty(editBookById.summary)) libContext.SaveChanges();
+
+
+                        //libContext.SaveChanges();
+                        
+
+
+                        //}
+
+
                         Console.WriteLine("To view details enter the book ID, to return to the Main Menu press <Enter>.");
                         Console.Write("Enter ID Number:");
                     }
