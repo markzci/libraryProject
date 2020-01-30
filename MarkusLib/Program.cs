@@ -94,7 +94,7 @@ namespace MarkusLib
         public static void Add()
         {
             Header();
-            Console.WriteLine("==== Add a Book ==== \n");
+            Console.WriteLine("Add a Book ========================= \n");
             Console.WriteLine("To Add a Book, press <Enter> to proceed, or press <Escape> to return to the Main Menu.  \n");
 
             //read user key from console
@@ -138,7 +138,7 @@ namespace MarkusLib
 
         public static void Edit()
         {
-            Console.WriteLine("==== Edit a Book ==== \n");
+            Console.WriteLine("Edit a Book ======================== \n");
 
 
             var libContext = new LibContext();
@@ -175,19 +175,31 @@ namespace MarkusLib
 
                         Console.WriteLine("\nID:" + editBookById.ID +"\n");
                         Console.WriteLine("Input the following information. To leave a field unchanged, hit <Enter> ");
-
+    
                         Console.Write($"Title[{editBookById.title}]:");
-                        editBookById.title = Console.ReadLine();
-                        if (editBookById.title.Length > 0) libContext.SaveChanges(); //check if title is empty, if not, save, else skip
-
+                        var titleEdit = Console.ReadLine();
                         Console.Write($"Author[{editBookById.author}]:");
-                        editBookById.author = Console.ReadLine();
-                        if (editBookById.author.Length > 0) libContext.SaveChanges(); //check if author is empty, if not, save, else skip
-
-
+                        var authorEdit = Console.ReadLine();
                         Console.Write($"Summary[{editBookById.summary}]:");
-                        editBookById.summary = Console.ReadLine();
-                        if (editBookById.summary.Length > 0) libContext.SaveChanges(); //check if summary is empty, if not, save, else skip
+                        var summaryEdit = Console.ReadLine();
+
+                        if (!String.IsNullOrEmpty(titleEdit))
+                        { 
+                            editBookById.title = titleEdit; //check if title is empty, if not, save, else skip
+                            libContext.SaveChanges();
+                        }
+
+                        if (!String.IsNullOrEmpty(authorEdit))
+                        {
+                            editBookById.author = authorEdit; //check if author is empty, if not, save, else skip
+                            libContext.SaveChanges();
+                        }
+
+                        if (!String.IsNullOrEmpty(summaryEdit))
+                        {
+                            editBookById.summary = summaryEdit;
+                            libContext.SaveChanges(); //check if summary is empty, if not, save, else skip
+                        }
 
                         Console.WriteLine("Book Saved.");
                         Console.WriteLine("To view details enter the book ID, to return to the Main Menu press <Enter>.");
@@ -253,7 +265,7 @@ namespace MarkusLib
 
         public static void WriteToFile()
         {
-            string filePath = @"C:\Users\Mark\Downloads\library.csv";
+            string filePath = @"C:\tmp\library.csv";
             var libContext = new LibContext();
             var entireLibrary = libContext.Books
                                        .ToList();
@@ -261,11 +273,17 @@ namespace MarkusLib
             var count = entireLibrary.Count();
             if (count > 0)
             {
-                foreach (var book in entireLibrary)
+                using (var stream = new StreamWriter(filePath, false))
                 {
-                    File.AppendAllText(filePath, String.Join(",", book.ID, book.author, book.title, book.summary + "\n"));
+                    foreach (var item in entireLibrary)
+                    {
+                        string row = string.Format("{0},{1},{2}, {3}", item.ID, item.title, item.author, item.summary);
+                        stream.WriteLine(row);
+                    }
                 }
-                Console.WriteLine("Library Saved.");
+
+                Console.Write("Library Saved. Press <Enter>");
+                Console.ReadKey();
             }
         }
 
