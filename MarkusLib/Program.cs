@@ -207,20 +207,44 @@ namespace MarkusLib
             var matchedItems = libContext.Books
                                           .Where(b => b.title.Contains(searchString))
                                           .ToList();
-            //var matchedItems = from b in libContext.Books
-            //                 where b.title.Contains(searchString) select b.title.ToList();
-
+            
             var matchCount = matchedItems.Count();
+
             if (matchCount > 0)
-                Console.WriteLine("The following books matched your query. Enter the book ID to see more details, or <Enter> to return.");
+            {
+                Console.WriteLine("The following items matched your query. Enter the book ID to see more details, or <Enter> to return.");
+                foreach (var book in matchedItems)
+                {
+                    Console.WriteLine($"[{book.ID}]{book.title}");
+                }
+                Console.Write("Enter ID:");
+
+                while (true)
+                {
+                    var bookIdInput = Console.ReadLine();
+                    if (int.TryParse(bookIdInput, out int id))
+                    {
+                        var bookById = libContext.Books
+                                              .Where(b => b.ID == id)
+                                              .Single();
+
+                
+                        Console.WriteLine("\nID:" + bookById.ID);
+                        Console.WriteLine($"Title: {bookById.title}");
+                        Console.WriteLine($"Author: {bookById.author}");
+                        Console.WriteLine($"Summary: {bookById.summary}" + "\n");
+                        
+                        Console.Write("Enter ID:");
+
+                    }
+                    else
+                        break;
+                }
+            }
             else
                 Console.WriteLine($"Nothing was found for the search term {searchString}");
 
-            foreach (var book in matchedItems)
-           {
-                Console.WriteLine(book.title);
-                Console.ReadLine();
-           }            //The following books matched your query. Enter the book ID to see more details, or <Enter> to return. 
+
         }
 
 
