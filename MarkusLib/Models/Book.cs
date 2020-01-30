@@ -11,5 +11,6 @@ namespace MarkusLib.Models
         public string title { get; set; }
         public string author { get; set; }
         public string summary { get; set; }
+        public List<Book> Books { get; set; }
     }
 }
