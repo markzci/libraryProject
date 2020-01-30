@@ -172,31 +172,21 @@ namespace MarkusLib
                                               .Where(b => b.ID == id)
                                               .Single();
 
-                        //foreach (var book in editBookById)
-                        //{
                         Console.WriteLine("\nID:" + editBookById.ID +"\n");
                         Console.WriteLine("Input the following information. To leave a field unchanged, hit <Enter> ");
 
                         Console.Write($"Title[{editBookById.title}]:");
                         editBookById.title = Console.ReadLine();
-                        if (!string.IsNullOrEmpty(editBookById.title)) libContext.SaveChanges();
+                        if (!string.IsNullOrEmpty(editBookById.title)) libContext.SaveChanges(); //check if title is empty, if not, save, else skip
 
                         Console.Write($"Author[{editBookById.author}]:");
                         editBookById.author = Console.ReadLine();
-                        if (!string.IsNullOrEmpty(editBookById.author)) libContext.SaveChanges();
+                        if (!string.IsNullOrEmpty(editBookById.author)) libContext.SaveChanges(); //check if author is empty, if not, save, else skip
 
 
                         Console.Write($"Summary[{editBookById.summary}]:");
                         editBookById.summary = Console.ReadLine();
-                        if (!string.IsNullOrEmpty(editBookById.summary)) libContext.SaveChanges();
-
-
-                        //libContext.SaveChanges();
-                        
-
-
-                        //}
-
+                        if (!string.IsNullOrEmpty(editBookById.summary)) libContext.SaveChanges(); //check if summary is empty, if not, save, else skip
 
                         Console.WriteLine("To view details enter the book ID, to return to the Main Menu press <Enter>.");
                         Console.Write("Enter ID Number:");
@@ -206,6 +196,33 @@ namespace MarkusLib
                 }
             }
         }
+
+        public static void Search()
+        {
+            Console.WriteLine("==== Search the Library ==== \n");
+            Console.Write("Search:");
+            string searchString = Console.ReadLine();
+
+            var libContext = new LibContext();
+            var matchedItems = libContext.Books
+                                          .Where(b => b.title.Contains(searchString))
+                                          .ToList();
+            //var matchedItems = from b in libContext.Books
+            //                 where b.title.Contains(searchString) select b.title.ToList();
+
+            var matchCount = matchedItems.Count();
+            if (matchCount > 0)
+                Console.WriteLine("The following books matched your query. Enter the book ID to see more details, or <Enter> to return.");
+            else
+                Console.WriteLine($"Nothing was found for the search term {searchString}");
+
+            foreach (var book in matchedItems)
+           {
+                Console.WriteLine(book.title);
+                Console.ReadLine();
+           }            //The following books matched your query. Enter the book ID to see more details, or <Enter> to return. 
+        }
+
 
 
         static void Main(string[] args)
@@ -232,7 +249,11 @@ namespace MarkusLib
                             Header();
                             Edit();
                             break;
-                        
+                        case 4:
+                            Header();
+                            Search();
+                            break;
+
                     }
                 }
             }
